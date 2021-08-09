@@ -1,5 +1,6 @@
 'use strict';
 
+// **************************** Image Array **************************
 
 let imageArr = [
     'bag.jpg',
@@ -23,6 +24,8 @@ let imageArr = [
     'wine-glass.jpg'
 ];
 
+// **************************************** Defining Variables (global) *************************
+
 let all = [];
 let counter = 0;
 let round = 25;
@@ -39,12 +42,14 @@ let thirdRandom = 0;
 const imageSection = document.getElementById('images-section');
 
 
+// *********************** Constructor Function & Render Function *************************
+
 function busMallPictures(name, imageSrc) {
 
     this.name = name;
     this.image = imageSrc;
     this.seen = 0;
-    this.clicked = 0;
+    this.voted = 0;
     busMallPictures.all.push(this);
 
 }
@@ -55,7 +60,7 @@ for (let i = 0; i < imageArr.length; i++) {
     new busMallPictures(imageArr[i].split('.')[0], imageArr[i]);
 }
 
-console.log(busMallPictures.all);
+// console.log(busMallPictures.all);
 
 
 function run() {
@@ -79,10 +84,15 @@ do {
     busMallPictures.all[secondRandom].seen++;
     busMallPictures.all[thirdRandom].seen++;
 
-    console.log(busMallPictures.all);
+    // console.log(busMallPictures.all);
 }
 
 run();
+
+
+
+
+// ************************ Click Event Listener **********************
 
 imageSection.addEventListener('click', clickHandler);
 function clickHandler(event) {
@@ -91,21 +101,22 @@ function clickHandler(event) {
         counter++;
 
         if (event.target.id === '1stImage') {
-            busMallPictures.all[firstRandom].clicked++;
+            busMallPictures.all[firstRandom].voted++;
         }
 
         if (event.target.id === '2ndImage') {
-            busMallPictures.all[secondRandom].clicked++;
+            busMallPictures.all[secondRandom].voted++;
         }
 
         if (event.target.id === '3rdImage') {
-            busMallPictures.all[thirdRandom].clicked++;
+            busMallPictures.all[thirdRandom].voted++;
         }
 
 
     }
 }
 
+// ************************* Rsult Event Listener *************************
 
 let section = document.getElementById('viewResult');
 
@@ -121,17 +132,85 @@ function clickListener() {
 
     for (let i = 0; i < imageArr.length; i++) {
         let liElement = document.createElement('li');
-        liElement.textContent = `${busMallPictures.all[i].name} has been seen ${busMallPictures.all[i].seen} times and voted ${busMallPictures.all[i].clicked} times.`;
+        liElement.textContent = `${busMallPictures.all[i].name} has been seen ${busMallPictures.all[i].seen} times and voted ${busMallPictures.all[i].voted} times.`;
         ulElement.appendChild(liElement);
     }
 
+   
+
+
+    // ****************************************  Result Chart *******************************
+
+    
+    function newChart () {
+
+        let namesArray = [];
+        let seenArray = [];
+        let votedArray = [];
+    
+        for ( let i = 0; i < busMallPictures.all.length; i++) {
+            namesArray.push(busMallPictures.all[i].name);
+            seenArray.push(busMallPictures.all[i].seen);
+            votedArray.push(busMallPictures.all[i].voted);
+        }
+    
+        let ctx = document.getElementById('resultChart').getContext('2d');
+    
+       let resultChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: namesArray,
+                datasets: [{
+                    label: '# Seen',
+                    data: seenArray,
+                    backgroundColor: [
+                        'rgba(255, 191, 70, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(107, 5, 4, 1)'
+                    ],
+                    borderWidth: 2   
+                }, {
+                    label: '# Voted',
+                    data: votedArray,
+                    backgroundColor: [
+                        
+                        'rgba(107, 5, 4, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 191, 70, 1)'
+                    ],
+                    borderWidth: 2   
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    newChart();
+
+
+    // ********************* Remove listener **************************
+
     result.removeEventListener('click', clickListener);
+
+
 }
 
 
 
 
+// *************************** Random Number Function ***********************
 
 function randomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+
+
