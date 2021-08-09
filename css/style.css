@@ -5,11 +5,12 @@
 body {
     width: 1200px;
     margin: auto;
-    background-color: #575761;
+    background-color: #6B0504;
 }
 
 header {
-    background-color: #FFBF46;
+    background-color: #001514;
+    color: #FFBF46;
     height: 200px;
     display: flex;
     justify-content: center;
@@ -19,7 +20,8 @@ header {
 }
 
 h1 {
-    color: #061826;
+    color:#FFBF46;
+    font-size: 50px;
 }
 
 #images-section {
@@ -28,8 +30,20 @@ h1 {
     gap: 10px;
     width: 100%;
     padding: 10px;
-    margin-top: 100px;
+    margin-top: 50px;
     margin-bottom: 50px;
+    background-color: #001514;
+}
+
+h2 {
+    color: #FFBF46;
+    align-items: center;
+    background-color: #001514;
+    width: 300px;
+    text-align: center;
+    margin: 50px auto;
+
+    
 }
 
 
@@ -40,30 +54,31 @@ img {
 
 #viewResult {
     margin: auto;
-    display: flex;
-    justify-content: center;
     height: 400px;
     width: 100%;
     gap: 20px;
-   
 }
 
 section button {
     width: 100px;
     height: 50px;
-    background-color: #FFBF46;
-    color: #061826;
+    background-color: #001514;
+    color:#FFBF46; 
+    font-size: medium;
 }
 
 section ul {
-    background-color: #FFBF46;
-    color: #061826;
-    
+    display: grid;
+    grid-template-columns: auto auto;
+    background-color: #001514;
+    color:#FFBF46;
+  font-size: larger;
+  padding-left: 100px;
 }
 
 
 footer {
-    background-color: #FFBF46;
+    background-color:  #001514;
     padding-top: 10px;
     text-align: center;
     height: 100px;
@@ -71,6 +86,7 @@ footer {
 }
 
 footer p {
-    color: #061826;
+    color: #FFBF46;
+    text-transform: capitalize;
 }
 
