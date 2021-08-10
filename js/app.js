@@ -44,37 +44,36 @@ const imageSection = document.getElementById('images-section');
 
 // *********************** Constructor Function & Render Function *************************
 
-function busMallPictures(name, imageSrc) {
+function busMallPictures(name, imageSrc, seen = 0, vote = 0) {
 
     this.name = name;
     this.image = imageSrc;
-    this.seen = 0;
-    this.voted = 0;
+    this.seen = seen;
+    this.voted = vote;
     busMallPictures.all.push(this);
 
 }
 
 busMallPictures.all = [];
 
-for (let i = 0; i < imageArr.length; i++) {
-    new busMallPictures(imageArr[i].split('.')[0], imageArr[i]);
-}
+getData(); // convert the data from local storage as string to array
 
-// console.log(busMallPictures.all);
-
+let prevArray = [];
 
 function run() {
-    firstRandom = randomNumber(0, imageArr.length - 1);
-    
-    
 
-do {
-    secondRandom = randomNumber(0, imageArr.length - 1);
-} while (secondRandom == firstRandom)
 
-do {
-    thirdRandom = randomNumber(0, imageArr.length - 1);
-} while (thirdRandom == secondRandom || thirdRandom == firstRandom)
+
+
+    do {
+        firstRandom = randomNumber(0, imageArr.length - 1);
+        secondRandom = randomNumber(0, imageArr.length - 1);
+        thirdRandom = randomNumber(0, imageArr.length - 1);
+    } while (firstRandom === secondRandom || firstRandom === thirdRandom || secondRandom === thirdRandom ||
+    prevArray.includes(firstRandom) || prevArray.includes(secondRandom) || prevArray.includes(thirdRandom))
+
+
+    prevArray = [firstRandom, secondRandom, thirdRandom];
 
     firstImage.src = './img/' + busMallPictures.all[firstRandom].image;
     secondImage.src = './img/' + busMallPictures.all[secondRandom].image;
@@ -83,6 +82,9 @@ do {
     busMallPictures.all[firstRandom].seen++;
     busMallPictures.all[secondRandom].seen++;
     busMallPictures.all[thirdRandom].seen++;
+
+    localStorage.data = JSON.stringify(busMallPictures.all);
+    console.log(busMallPictures.all);
 
     // console.log(busMallPictures.all);
 }
@@ -96,7 +98,7 @@ run();
 
 imageSection.addEventListener('click', clickHandler);
 function clickHandler(event) {
-    if ((event.target.id === '1stImage' || event.target.id === '2ndImage' || event.target.id === '3rdImage') && counter < round) {   
+    if ((event.target.id === '1stImage' || event.target.id === '2ndImage' || event.target.id === '3rdImage') && counter < round) {
         run();
         counter++;
 
@@ -113,7 +115,7 @@ function clickHandler(event) {
         }
 
 
-    }
+    } 
 }
 
 // ************************* Rsult Event Listener *************************
@@ -127,36 +129,41 @@ section.appendChild(result);
 
 result.addEventListener('click', clickListener);
 function clickListener() {
-    let ulElement = document.createElement('ul');
-    section.appendChild(ulElement);
+    
+    if ( counter == round ) {
 
-    for (let i = 0; i < imageArr.length; i++) {
-        let liElement = document.createElement('li');
-        liElement.textContent = `${busMallPictures.all[i].name} has been seen ${busMallPictures.all[i].seen} times and voted ${busMallPictures.all[i].voted} times.`;
-        ulElement.appendChild(liElement);
-    }
-
-   
+        counter++;
+        
+        let ulElement = document.createElement('ul');
+        section.appendChild(ulElement);
+    
+        for (let i = 0; i < imageArr.length; i++) {
+            let liElement = document.createElement('li');
+            liElement.textContent = `${busMallPictures.all[i].name} has been seen ${busMallPictures.all[i].seen} times and voted ${busMallPictures.all[i].voted} times.`;
+            ulElement.appendChild(liElement);
+        }
+    
+    
 
 
     // ****************************************  Result Chart *******************************
 
-    
-    function newChart () {
+
+    function newChart() {
 
         let namesArray = [];
         let seenArray = [];
         let votedArray = [];
-    
-        for ( let i = 0; i < busMallPictures.all.length; i++) {
+
+        for (let i = 0; i < busMallPictures.all.length; i++) {
             namesArray.push(busMallPictures.all[i].name);
             seenArray.push(busMallPictures.all[i].seen);
             votedArray.push(busMallPictures.all[i].voted);
         }
-    
+
         let ctx = document.getElementById('resultChart').getContext('2d');
-    
-       let resultChart = new Chart(ctx, {
+
+        let resultChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: namesArray,
@@ -169,18 +176,18 @@ function clickListener() {
                     borderColor: [
                         'rgba(107, 5, 4, 1)'
                     ],
-                    borderWidth: 2   
+                    borderWidth: 2
                 }, {
                     label: '# Voted',
                     data: votedArray,
                     backgroundColor: [
-                        
+
                         'rgba(107, 5, 4, 1)'
                     ],
                     borderColor: [
                         'rgba(255, 191, 70, 1)'
                     ],
-                    borderWidth: 2   
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -192,7 +199,7 @@ function clickListener() {
             }
         });
     }
-    
+
     newChart();
 
 
@@ -201,6 +208,8 @@ function clickListener() {
     result.removeEventListener('click', clickListener);
 
 
+    }
+        
 }
 
 
@@ -213,4 +222,18 @@ function randomNumber(min, max) {
 }
 
 
+// ************************ Get Data Function (local storage parse) **********************
 
+function getData () {
+    if (localStorage.data) {
+        let data = JSON.parse(localStorage.data);
+
+        for ( let i = 0; i < data.length; i++) {
+            new busMallPictures (data[i].name, data[i].image, data[i].seen, data[i].voted);
+        }
+    } else {
+        for (let i = 0; i < imageArr.length; i++) {
+            new busMallPictures(imageArr[i].split('.')[0], imageArr[i]);
+        }
+    }
+}
